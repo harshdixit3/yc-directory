@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { auth, signOut, signIn } from "@/auth";
+import ModeToggle from "@/components/ui/modToggle";
+import {Button} from "@/components/ui/button";
 
 
 const Navbar = async () => {
@@ -16,7 +18,7 @@ const Navbar = async () => {
                 <div className="flex items-center gap-5 text-black">
                     {session && session?.user ? (
                         <>
-                            <Link href="/app/(root)/startup/create">
+                            <Link href="/startup/create">
                                 <span className="">Create</span>
 
                             </Link>
@@ -49,6 +51,10 @@ const Navbar = async () => {
                             <button type="submit">Login</button>
                         </form>
                     )}
+                    <div className="flex items-center gap-5" >
+                        <ModeToggle />
+                    </div>
+
                 </div>
             </nav>
         </header>
