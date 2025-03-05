@@ -1,21 +1,23 @@
 "use client";
-import {Input} from "@/components/ui/input";
-import React, {useActionState, useState} from 'react'
-import {Textarea} from "@/components/ui/textarea";
-import MDEditor from '@uiw/react-md-editor';
-import {Button} from "@/components/ui/button";
-import {Send} from "lucide-react";
-import {formSchema} from "@/lib/validation";
-import { z } from "zod";
 
+import React, { useState, useActionState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import MDEditor from "@uiw/react-md-editor";
+import { Button } from "@/components/ui/button";
+import { Send } from "lucide-react";
+import { formSchema } from "@/lib/validation";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { createPitch } from "@/lib/actions";
 
 const StartupForm = () => {
-
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [pitch, setPitch] = useState('');
-   
+    const [pitch, setPitch] = useState("");
 
-    const handelFormSubmit = async (prevState : any , formData: FormData) => {
+    const router = useRouter();
+
+    const handleFormSubmit = async (prevState: any, formData: FormData) => {
         try {
             const formValues = {
                 title: formData.get("title") as string,
@@ -27,91 +29,106 @@ const StartupForm = () => {
 
             await formSchema.parseAsync(formValues);
 
-            console.log(formValues);
+            const result = await createPitch(prevState, formData, pitch);
 
-            // const result = await creatIdea( pitch , prevState , formData );
-            // console.log(result);
+            if (result.status == "SUCCESS") {
 
-        } catch (error) {
-            if (error instanceof z.ZodError){
-                const fieldError = error.flatten().fieldErrors;
-
-                setErrors(fieldError as unknown as Record<string, string>);
-                return { ...prevState, errors: "Validation failed" , status: 'error' };
+                router.push(`/startup/${result._id}`);
             }
 
-            return { ...prevState , error: "An Unexpected error has occurred" , status: 'error' };
+            return result;
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const fieldErorrs = error.flatten().fieldErrors;
 
+                setErrors(fieldErorrs as unknown as Record<string, string>);
+
+
+
+                return { ...prevState, error: "Validation failed", status: "ERROR" };
+            }
+
+
+            return {
+                ...prevState,
+                error: "An unexpected error has occurred",
+                status: "ERROR",
+            };
         }
     };
 
-
-    const [state , formAction , isPending] = useActionState(
-        handelFormSubmit,{
-            error: " " ,
-            status:"Initial",
+    const [state, formAction, isPending] = useActionState(handleFormSubmit, {
+        error: "",
+        status: "INITIAL",
     });
 
-
     return (
-        <form  action={() => {}} className="startup-form">
+        <form action={formAction} className="startup-form">
             <div>
                 <label htmlFor="title" className="startup-form_label">
                     Title
                 </label>
-               <Input
-                   id="title"
-                   name="title"
-                   className="startup-form_input"
-                   required
-                   placeholder="Starup Title"
-               />
+                <Input
+                    id="title"
+                    name="title"
+                    className="startup-form_input"
+                    required
+                    placeholder="Startup Title"
+                />
+
                 {errors.title && <p className="startup-form_error">{errors.title}</p>}
             </div>
 
             <div>
                 <label htmlFor="description" className="startup-form_label">
-                    description
+                    Description
                 </label>
-               <Textarea
-                   id="description"
-                   name="description"
-                   className="startup-form_textarea"
-                   required
-                   placeholder="Starup description"
-               />
-                {errors.description && <p className="startup-form_error">{errors.description}</p>}
+                <Textarea
+                    id="description"
+                    name="description"
+                    className="startup-form_textarea"
+                    required
+                    placeholder="Startup Description"
+                />
+
+                {errors.description && (
+                    <p className="startup-form_error">{errors.description}</p>
+                )}
             </div>
 
             <div>
                 <label htmlFor="category" className="startup-form_label">
-                    category
+                    Category
                 </label>
-               <Input
-                   id="category"
-                   name="category"
-                   className="startup-form_input"
-                   required
-                   placeholder="Starup category (Tech , Health ,Education ..."
-               />
-                {errors.category && <p className="startup-form_error">{errors.category}</p>}
+                <Input
+                    id="category"
+                    name="category"
+                    className="startup-form_input"
+                    required
+                    placeholder="Startup Category (Tech, Health, Education...)"
+                />
+
+                {errors.category && (
+                    <p className="startup-form_error">{errors.category}</p>
+                )}
             </div>
 
             <div>
                 <label htmlFor="link" className="startup-form_label">
-                    Image Url
+                    Image URL
                 </label>
-               <Input
-                   id="link"
-                   name="link"
-                   className="startup-form_input"
-                   required
-                   placeholder="Starup Image Url"
-               />
+                <Input
+                    id="link"
+                    name="link"
+                    className="startup-form_input"
+                    required
+                    placeholder="Startup Image URL"
+                />
+
                 {errors.link && <p className="startup-form_error">{errors.link}</p>}
             </div>
 
-            <div data-color-mode="light" >
+            <div data-color-mode="light">
                 <label htmlFor="pitch" className="startup-form_label">
                     Pitch
                 </label>
@@ -134,11 +151,17 @@ const StartupForm = () => {
 
                 {errors.pitch && <p className="startup-form_error">{errors.pitch}</p>}
             </div>
-            <Button type="submit" className="startup-form_btn text-white" disabled={isPending}>
+
+            <Button
+                type="submit"
+                className="startup-form_btn text-white"
+                disabled={isPending}
+            >
                 {isPending ? "Submitting..." : "Submit Your Pitch"}
                 <Send className="size-6 ml-2" />
             </Button>
         </form>
-    )
-}
-export default StartupForm
+    );
+};
+
+export default StartupForm;
