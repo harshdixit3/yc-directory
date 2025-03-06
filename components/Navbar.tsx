@@ -3,6 +3,7 @@ import Image from "next/image";
 import { auth, signOut, signIn } from "@/auth";
 import { BadgePlus, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ModeToggle from "@/components/ui/modToggle";
 
 const Navbar = async () => {
     const session = await auth();
@@ -13,6 +14,8 @@ const Navbar = async () => {
                 <Link href="/">
                     <Image src="/logo.png" alt="logo" width={144} height={30} />
                 </Link>
+
+                <ModeToggle />
 
                 <div className="flex items-center gap-5 text-black">
                     {session && session?.user ? (
