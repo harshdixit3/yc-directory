@@ -15,11 +15,12 @@ const Navbar = async () => {
                     <Image src="/logo.png" alt="logo" width={144} height={30} />
                 </Link>
 
-                <ModeToggle />
-
                 <div className="flex items-center gap-5 text-black">
                     {session && session?.user ? (
                         <>
+                            <div>
+                                <ModeToggle />
+                            </div>
                             <Link href="/startup/create">
                                 <span className="max-sm:hidden">Create</span>
                                 <BadgePlus className="size-6 sm:hidden" />
