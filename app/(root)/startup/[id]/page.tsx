@@ -28,7 +28,7 @@ const Page = async ({params} : {params: Promise<{id:string}>}) => {
                 <p className="tag">
                     {formatDate(post?._createdAt)}
                 </p>
-                 <h1 className="heading">{post.title}</h1>
+                <h1 className="heading">{post.title}</h1>
                 <p className="sub-heading !max-w-5xl">{post.description}</p>
             </section>
             <section className="section_container">
@@ -60,12 +60,12 @@ const Page = async ({params} : {params: Promise<{id:string}>}) => {
                         </p>
                     </div>
                     <h3 className="text-30-bold">
-                       Pitch Details
+                        Pitch Details
                     </h3>
                     {parsedContent ? (
                         <article
                             className="prose max-w-4xl font-work-sans break-all"
-                        dangerouslySetInnerHTML={{__html: parsedContent}}/>
+                            dangerouslySetInnerHTML={{__html: parsedContent}}/>
                     ) : (
                         <p className="no-result">
                             No Details Provided
@@ -74,9 +74,9 @@ const Page = async ({params} : {params: Promise<{id:string}>}) => {
                 </div>
                 <hr className="divider"/>
 
-               <Suspense fallback={<Skeleton className="view_skeleton"/>}>
-                   <View id={id} />
-               </Suspense>
+                <Suspense fallback={<Skeleton className="view_skeleton"/>}>
+                    <View id={id} />
+                </Suspense>
 
             </section>
         </>
